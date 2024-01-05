@@ -20,6 +20,11 @@ type LogoutRequest struct {
 	UserName string `json:"user_name"`
 }
 
+// LogoffRequest 注销请求
+type LogoffRequest struct {
+	UserName string `json:"user_name"`
+}
+
 // GetUserInfoRequest 获取用户信息请求
 type GetUserInfoRequest struct {
 	UserName string `json:"user_name"`
@@ -32,6 +37,7 @@ type GetUserInfoResponse struct {
 	Gender   string `json:"gender"`
 	PassWord string `json:"pass_word"`
 	NickName string `json:"nick_name"`
+	HeadUrl  string `json:"headurl"`
 }
 
 // UpdateNickNameRequest 修改用户信息返回结构

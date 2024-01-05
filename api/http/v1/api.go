@@ -6,7 +6,11 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
+	"io"
+	"mime/multipart"
 	"net/http"
+	"os"
+	"path/filepath"
 	"time"
 	"user_system/config"
 	"user_system/internal/service"
@@ -82,6 +86,29 @@ func Logout(c *gin.Context) {
 		rsp.ResponseWithError(c, CodeLogoutErr, err.Error())
 		return
 	}
+	// 登出成功，删除cookie
+	c.SetCookie(constant.SessionKey, session, -1, "/", "", false, true)
+	rsp.ResponseSuccess(c)
+}
+
+// Logoff 注销
+func Logoff(c *gin.Context) {
+	session, _ := c.Cookie(constant.SessionKey)
+	ctx := context.WithValue(context.Background(), constant.SessionKey, session)
+	req := &service.LogoffRequest{}
+	rsp := &HttpResponse{}
+	err := c.ShouldBindJSON(req)
+	if err != nil {
+		log.Errorf("bind get logoff request json err %v", err)
+		rsp.ResponseWithError(c, CodeBodyBindErr, err.Error())
+		return
+	}
+	uuid := utils.Md5String(req.UserName + time.Now().GoString())
+	ctx = context.WithValue(ctx, "uuid", uuid)
+	if err := service.Logoff(ctx, req); err != nil {
+		rsp.ResponseWithError(c, CodeLogoffErr, err.Error())
+		return
+	}
 	c.SetCookie(constant.SessionKey, session, -1, "/", "", false, true)
 	rsp.ResponseSuccess(c)
 }
@@ -125,4 +152,54 @@ func UpdateNickName(c *gin.Context) {
 		return
 	}
 	rsp.ResponseSuccess(c)
+}
+
+// UploadPic 用户上传头像
+func UploadPic(c *gin.Context) {
+	rsp := &HttpResponse{}
+	username := c.Query("username")
+	file, header, err := c.Request.FormFile("picture")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"code": 1, "msg": "未选择文件"})
+		return
+	}
+	defer file.Close()
+	// 保存文件到本地
+	imagePath, err := saveAvatarLocally(file, header, username)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"code": 1, "msg": "上传文件失败"})
+		return
+	}
+
+	session, _ := c.Cookie(constant.SessionKey)
+	log.Infof("UploadUserPic|session=%s", session)
+
+	ctx := context.WithValue(context.Background(), constant.SessionKey, session)
+	uuid := utils.Md5String(username + time.Now().GoString())
+	ctx = context.WithValue(ctx, "uuid", uuid)
+	if err := service.UploadPic(ctx, username, imagePath); err != nil {
+		rsp.ResponseWithError(c, CodeUploadPicErr, err.Error())
+		return
+	}
+	rsp.ResponseSuccess(c)
+}
+
+// 保存用户头像到本地
+func saveAvatarLocally(file multipart.File, header *multipart.FileHeader, username string) (string, error) {
+	// 生成一个唯一的文件名
+	filename := username + filepath.Ext(header.Filename)
+	// 保存文件到指定目录
+	localPath := filepath.Join("./web/static/images/userPic", filename)
+	// 储存到数据库中的头像路径
+	path := filepath.Join("/images/userPic", filename)
+	out, err := os.Create(localPath)
+	if err != nil {
+		return "", err
+	}
+	defer out.Close()
+	_, err = io.Copy(out, file)
+	if err != nil {
+		return "", err
+	}
+	return path, nil
 }

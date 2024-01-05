@@ -1,13 +1,14 @@
 package router
 
 import (
-	"github.com/gin-gonic/gin"
-	log "github.com/sirupsen/logrus"
 	"net/http"
 	"strconv"
 	api "user_system/api/http/v1"
 	"user_system/config"
 	"user_system/pkg/constant"
+
+	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 )
 
 // InitRouterAndServe 路由配置、启动服务
@@ -18,20 +19,23 @@ func InitRouterAndServe() {
 
 	// 健康检查
 	r.GET("ping", api.Ping)
-	//健康检查
 	// 用户注册
 	r.POST("/user/register", api.Register)
 	// 用户登录
 	r.POST("/user/login", api.Login)
 	// 用户登出
 	r.POST("/user/logout", AuthMiddleWare(), api.Logout)
+	// 用户注销
+	r.POST("/user/logoff", AuthMiddleWare(), api.Logoff)
 	// 获取用户信息
 	r.GET("/user/get_user_info", AuthMiddleWare(), api.GetUserInfo)
 	// 更新用户信息
 	r.POST("/user/update_nick_name", AuthMiddleWare(), api.UpdateNickName)
+	// 用户上传头像
+	r.POST("/uploadpic", AuthMiddleWare(), api.UploadPic)
 
 	r.Static("/static/", "./web/static/")
-	r.Static("/upload/images/", "./web/upload/images/")
+	r.Static("/images/userPic/", "./web/static/images/userPic")
 
 	// 启动server
 	port := config.GetGlobalConf().AppConfig.Port
@@ -58,6 +62,5 @@ func AuthMiddleWare() gin.HandlerFunc {
 		// 返回错误
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "err"})
 		c.Abort()
-		return
 	}
 }

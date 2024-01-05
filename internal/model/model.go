@@ -24,6 +24,7 @@ type User struct {
 	Age      int    `gorm:"column:age"`      //年龄
 	PassWord string `gorm:"column:password"` //密码
 	NickName string `gorm:"column:nickname"` //昵称
+	HeadUrl  string `gorm:"column:head_url"` //头像
 }
 
 // TableName 表名

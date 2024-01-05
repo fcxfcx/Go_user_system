@@ -68,3 +68,9 @@ func DelSessionInfo(session string) error {
 	_, err := utils.GetRedisCli().Del(context.Background(), redisKey).Result()
 	return err
 }
+
+func DelUserInfo(username string) error {
+	redisKey := constant.UserInfoPrefix + username
+	_, err := utils.GetRedisCli().Del(context.Background(), redisKey).Result()
+	return err
+}

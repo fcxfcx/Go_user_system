@@ -31,6 +31,7 @@
         <div id="login_control">
             <button type="button" id="btn_edit" onclick="changeNickName()">修改昵称</button>
             <button type="button" id="btn_logout" onclick="logout()">登出</button>
+            <button type="button" id="btn_logoff" onclick="logoff()">注销</button>
         </div>
     </div>
 </form>
@@ -107,6 +108,26 @@
                 alert("登出失败")
             }
         });
+    }
+
+    function logoff(){
+        console.log("send to logoff")
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: urlPrefix + '/user/logoff',
+            contentType: "application/json",
+            data: JSON.stringify({
+                "user_name": username.value,
+            }),
+            success: function (result) {
+                alert("注销成功");
+                window.location.href = urlPrefix + "/static/login.html"
+            },
+            error : function (result) {
+                alert("注销失败")
+            }
+        })
     }
 
     function changeNickName() {

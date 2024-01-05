@@ -1,0 +1,13 @@
+[2024-01-02 15:02:13] INFO[db.go:23] mdb addr:root:123456@(0.0.0.0:8086)/camps_user?charset=utf8&parseTime=True&loc=Local
+[2024-01-02 15:02:13] INFO[user.go:43] user ====== &{CreateModel:{Creator:fcxfcx CreateTime:0001-01-01 00:00:00 +0000 UTC} ModifyModel:{Modifier:fcxfcx ModifyTime:0001-01-01 00:00:00 +0000 UTC} ID:0 Name:fcxfcx Gender:male Age:24 PassWord:123456 NickName:Star}
+[2024-01-02 15:02:13] INFO[user.go:30] insert success
+[2024-01-02 15:02:18] INFO[api.go:56] loggin start,user:fcxfcx, password:123456
+[2024-01-02 15:02:18] INFO[redis.go:20] redisConfig======={Host:0.0.0.0 Port:8089 DB:0 PassWord: PoolSize:100}
+[2024-01-02 15:02:18] INFO[redis.go:32] res=======OK,err======<nil>
+[2024-01-02 15:02:18] INFO[user.go:172] user === &{CreateModel:{Creator:fcxfcx CreateTime:2024-01-02 15:02:13 +0800 CST} ModifyModel:{Modifier:fcxfcx ModifyTime:2024-01-02 15:02:13 +0800 CST} ID:1 Name:fcxfcx Gender:male Age:24 PassWord:123456 NickName:Star}
+[2024-01-02 15:02:18] INFO[user.go:177] getUserInfo successfully, with key userinfo_fcxfcx
+[2024-01-02 15:02:18] INFO[user.go:76] Login successfully, fcxfcx@123456 with redis_session session_b00c3fd5781b759dc8448976226ccd59
+[2024-01-02 15:02:18] INFO[user.go:105] cc8c012a506cce977ca544c95df67f18|GetUserInfo access from,user_name=fcxfcx|session=b00c3fd5781b759dc8448976226ccd59
+[2024-01-02 15:02:18] INFO[user.go:120] cc8c012a506cce977ca544c95df67f18|Succ to GetUserInfo|user_name=fcxfcx|session=b00c3fd5781b759dc8448976226ccd59
+[2024-01-02 15:02:38] INFO[user.go:84] 6d666eccd2ee415941592625ccd7990a|Logout access from,user_name=fcxfcx|session=b00c3fd5781b759dc8448976226ccd59
+[2024-01-02 15:02:38] INFO[user.go:97] 6d666eccd2ee415941592625ccd7990a|Success to delSessionInfo :b00c3fd5781b759dc8448976226ccd59
